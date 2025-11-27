@@ -1,10 +1,4 @@
-Base path: '/home/kuhns/Unity/Hub/Editor/6000.2.14f1/Editor/Data', plugins path '/home/kuhns/Unity/Hub/Editor/6000.2.14f1/Editor/Data/PlaybackEngines'
-Cmd: initializeCompiler
-
-Cmd: initializeCompiler
-
-Cmd: initializeCompiler
-
+Base path: 'C:/Program Files/Unity/Hub/Editor/6000.2.14f1-x86_64/Editor/Data', plugins path 'C:/Program Files/Unity/Hub/Editor/6000.2.14f1-x86_64/Editor/Data/PlaybackEngines'
 Cmd: initializeCompiler
 
 Cmd: initializeCompiler

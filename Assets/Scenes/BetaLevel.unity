@@ -945,8 +945,8 @@ Transform:
   - {fileID: 7420741532729609353}
   - {fileID: 3168171199580999538}
   - {fileID: 6298001201374543290}
-  - {fileID: 475403490932107937}
   - {fileID: 7089005437316275626}
+  - {fileID: 475403490932107937}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1928432734
@@ -1887,7 +1887,7 @@ GameObject:
   - component: {fileID: 1045494738362496547}
   - component: {fileID: 5133121721459777129}
   m_Layer: 0
-  m_Name: Evil 2
+  m_Name: E Mage
   m_TagString: Unit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2368,12 +2368,12 @@ MonoBehaviour:
   hasMoved: 0
   hasAttacked: 0
   mouseIsOver: 0
-  range: 3
-  maxHealth: 10
+  range: 2
+  maxHealth: 7
   currentHealth: 0
-  attack: 5
-  defense: 1
-  move: 4
+  attack: 15
+  defense: 0
+  move: 5
 --- !u!114 &5306879898613254651
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2815,7 +2815,7 @@ GameObject:
   - component: {fileID: 7672897891443360040}
   - component: {fileID: 7672897891443360041}
   m_Layer: 0
-  m_Name: Evil 3
+  m_Name: E Archer
   m_TagString: Unit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2922,7 +2922,7 @@ GameObject:
   - component: {fileID: 6880464084353311032}
   - component: {fileID: 6998044244645187681}
   m_Layer: 0
-  m_Name: Evil 1
+  m_Name: E Knight
   m_TagString: Unit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3193,9 +3193,9 @@ MonoBehaviour:
   range: 2
   maxHealth: 7
   currentHealth: 0
-  attack: 8
+  attack: 15
   defense: 0
-  move: 4
+  move: 5
   squaresInRange: []
 --- !u!58 &7672897891443360040
 CircleCollider2D:
@@ -3258,12 +3258,12 @@ MonoBehaviour:
   hasMoved: 0
   hasAttacked: 0
   mouseIsOver: 0
-  range: 2
-  maxHealth: 7
+  range: 3
+  maxHealth: 10
   currentHealth: 0
-  attack: 8
-  defense: 0
-  move: 5
+  attack: 5
+  defense: 1
+  move: 4
 --- !u!58 &7989783776711004171
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -3352,7 +3352,7 @@ MonoBehaviour:
   currentHealth: 0
   attack: 5
   defense: 1
-  move: 5
+  move: 4
   squaresInRange: []
 --- !u!1 &9071645518214525139
 GameObject:
