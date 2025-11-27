@@ -54,28 +54,16 @@ public class Unit : MonoBehaviour
 	}
 
 	protected void Update()
-	{
-		if(mouseIsOver && !isSelected)
-		{
-			GetComponent<SpriteRenderer>().color = Color.cyan;
-		}
-		else if(!isMyTurn && tm.currentTeamIndex == team)
-		{
-			GetComponent<SpriteRenderer>().color = new Color(savedColor.r/2, savedColor.g/2, savedColor.b/2, savedColor.a);  
-		}
-		else
-		{
-			GetComponent<SpriteRenderer>().color = savedColor;
-		}
+	{ 
+		GetComponent<SpriteRenderer>().color = mouseIsOver && !isSelected ? Color.cyan
+										     : !isMyTurn && tm.currentTeamIndex == team ? new Color(savedColor.r/2, savedColor.g/2, savedColor.b/2, savedColor.a) 
+											 : savedColor;
 
 		if(Input.GetMouseButtonUp(0))
 		{
 			GetComponent<CircleCollider2D>().enabled = false;
 			GetComponent<CircleCollider2D>().enabled = true;
-			if(mouseIsOver && !isMyTurn)
-			{
-				OnClicked();
-			}
+			if(mouseIsOver && !isMyTurn) OnClicked();
 		}
 	}
 
@@ -111,7 +99,7 @@ public class Unit : MonoBehaviour
 					p.gameObject.GetComponent<SpriteRenderer>().flipX = (transform.position.x < p.gameObject.transform.position.x);
 				}
 
-				currentHealth -= (p.attack - defense);
+				currentHealth -= p.attack - defense;
 				p.hasAttacked = true;
 				if(currentHealth <= 0)
 				{
@@ -123,15 +111,11 @@ public class Unit : MonoBehaviour
 		}
 	}
 
-	
-
 	public TileController FindCurrentSquare()
 	{
 		RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.zero, 1f, LayerMask.GetMask("Board"));
 		if(hit.transform.gameObject.tag == "Board")
-		{
 			return hit.transform.gameObject.GetComponent<TileController>();
-		}
 		else
 			return null;
 	}
@@ -140,7 +124,7 @@ public class Unit : MonoBehaviour
 	{
 		enemiesInRange.Clear();
 		List<RaycastHit2D> hits = new List<RaycastHit2D>();
-		if(Physics2D.CircleCast(transform.position, range, Vector2.up, new ContactFilter2D().NoFilter(), hits, 0f) > 0)
+		if(Physics2D.CircleCast(transform.position, range, Vector2.up, ContactFilter2D.noFilter, hits, 0f) > 0)
 		{
 			List<Unit> allInRange = new List<Unit>();
 			foreach(RaycastHit2D hit in hits)

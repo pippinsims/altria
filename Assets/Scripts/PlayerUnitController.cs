@@ -102,7 +102,7 @@ public class PlayerUnitController : Unit
 	public void NotifySquaresInArea(int radius)
 	{
 		List<RaycastHit2D> hits = new List<RaycastHit2D>();
-		if(Physics2D.CircleCast(transform.position, radius, Vector2.up, new ContactFilter2D().NoFilter(), hits, 0f) > 0)
+		if(Physics2D.CircleCast(transform.position, radius, Vector2.up, ContactFilter2D.noFilter, hits, 0f) > 0)
 		{
 			List<SquareController> circleCastSquares = new List<SquareController>();
 			foreach(RaycastHit2D hit in hits)
@@ -132,7 +132,7 @@ public class PlayerUnitController : Unit
 	void NotifyAccessibleSquares(int radius)
 	{
 		List<RaycastHit2D> hits = new List<RaycastHit2D>();
-		if(Physics2D.CircleCast(transform.position, radius, Vector2.up, new ContactFilter2D().NoFilter(), hits, 0f) > 0)
+		if(Physics2D.CircleCast(transform.position, radius, Vector2.up, ContactFilter2D.noFilter, hits, 0f) > 0)
 		{
 			List<SquareController> circleCastSquares = new List<SquareController>();
 			foreach(RaycastHit2D hit in hits)

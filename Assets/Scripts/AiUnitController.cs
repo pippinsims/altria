@@ -104,7 +104,7 @@ public class AiUnitController : Unit
 		List<RaycastHit2D> hits = new List<RaycastHit2D>();
 		SquareController furthest = null;
 		SquareController tempSquare;
-		if (Physics2D.CircleCast(targetUnit.transform.position, range, Vector2.up, new ContactFilter2D().NoFilter(), hits, 0f) > 0)
+		if (Physics2D.CircleCast(targetUnit.transform.position, range, Vector2.up, ContactFilter2D.noFilter, hits, 0f) > 0)
 		{
 			foreach (RaycastHit2D hit in hits)
 			{
