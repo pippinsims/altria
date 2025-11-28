@@ -32,9 +32,16 @@ public class Unit : MonoBehaviour
 	public int range = 2;
 	public int maxHealth = 10;
 	public int currentHealth = 0;
-	public int attack = 4;
-	public int defense = 0;
 	public int move = 2; //Including square at transform.position
+
+	[Header ("Combat Stats")]
+	public int strength = 4; //Affects Physical weapon damage
+	public int defense = 0;
+	public int speed = 5; //Affects multi-attack, and affects hit/avoid
+	public int dexterity = 3; //Primary hit/avoid modifier
+	public int luck = 0; //Crit
+	public int temporaryWeaponHit = 80; //TODO: Make weapons
+
 	
 	protected void Awake()
 	{
@@ -67,8 +74,9 @@ public class Unit : MonoBehaviour
 		}
 	}
 
-	protected void EndTurn()
+	protected virtual void EndTurn()
 	{
+		print("nend");
 		isMyTurn = false;
 		targetSquare = null;
 		isSelected = false;
@@ -91,25 +99,79 @@ public class Unit : MonoBehaviour
 			Unit p = tm.teams[tm.currentTeamIndex].members[tm.selectedUnitIndex];
 			if(p.hasMoved && p.isSelected && p.isMyTurn && p.enemiesInRange.Contains(this))
 			{
-				//TODO roll for hit and crit
 				if(p.animator != null)
 				{
 					p.animator.SetTrigger("Attack");
 
 					p.gameObject.GetComponent<SpriteRenderer>().flipX = (transform.position.x < p.gameObject.transform.position.x);
 				}
-
-				currentHealth -= p.attack - defense;
 				p.hasAttacked = true;
-				if(currentHealth <= 0)
-				{
-					tm.RemoveUnit(this, team);
-					FindCurrentSquare().isObstruction = false;
-					Destroy(this.gameObject);	
-				}
+				
+				//TODO: MAKE p.CalculateHit IN THE UI, AS WELL AS AVOID
+				p.Attack(this);
+				if(SquareController.ManhattanDistance(transform, p.transform) <= range)
+					Attack(p);
+				(Unit a, Unit d, int m) = GetAdvantageResultsAgainst(p);
+				a.AttackMutipleTimes(d, m >= 5 ? m/5 : 0);
 			}
 		}
 	}
+
+	private (Unit adv, Unit disAdv, int advMag) GetAdvantageResultsAgainst(Unit other)
+    {
+		int dif = speed - other.speed;
+		Unit a = this;
+		Unit d = other;
+		if(dif < 0) (a, d) = (d, a);
+
+        return (a, d, Mathf.Abs(dif));
+    }
+
+	private bool WithinPercent(int chance)
+    {
+        return Random.Range(0,101) <= chance;
+    }
+	public int CalculateDamage()
+    {
+		return strength * (WithinPercent(luck / 2) ? 2 : 1);
+    }
+
+	public int CalculateHit()
+    {
+		//TODO: MAKE THIS IN THE UI, AS WELL AS AVOID
+        return temporaryWeaponHit + dexterity * 2 + speed;
+    }
+
+	public bool ReceiveDamage(int dmg)
+    {
+		currentHealth -= dmg - defense;
+        if(currentHealth <= 0)
+		{
+			Die();
+		}
+		return currentHealth <= 0;
+    }
+
+	private void Die()
+    {
+		if(tm.teams[team].members[tm.selectedUnitIndex] == this)
+			EndTurn();
+        tm.RemoveUnit(this, team);
+		FindCurrentSquare().isObstruction = false;
+		Destroy(this.gameObject);
+		print("died");	
+    }
+
+	private void Attack(Unit target)
+    {
+        if(WithinPercent(CalculateHit() - (target.dexterity + target.speed)))
+			target.ReceiveDamage(CalculateDamage());
+    }
+
+	public void AttackMutipleTimes(Unit target, int num)
+    {
+        for(int i = 0; i < num; i++) Attack(target);
+    }
 
 	public TileController FindCurrentSquare()
 	{

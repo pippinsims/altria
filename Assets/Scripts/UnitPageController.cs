@@ -45,7 +45,7 @@ public class UnitPageController : MonoBehaviour
                 rangeText.enabled = unitIsSelected;
                 moveText.enabled = unitIsSelected;
                 healthText.text = ("HP:" + currentUnit.currentHealth + "/" + currentUnit.maxHealth);
-                attackText.text = ("A:" + currentUnit.attack);
+                attackText.text = ("A:" + currentUnit.strength);
                 defenseText.text = ("D:" + currentUnit.defense);
                 rangeText.text = ("R:" + currentUnit.range);
                 moveText.text = ("M:" + (currentUnit.move - 1));

@@ -2371,9 +2371,13 @@ MonoBehaviour:
   range: 2
   maxHealth: 7
   currentHealth: 0
-  attack: 15
-  defense: 0
   move: 5
+  strength: 15
+  defense: 0
+  speed: 5
+  dexterity: 5
+  luck: 12
+  temporaryWeaponHit: 80
 --- !u!114 &5306879898613254651
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2956,9 +2960,13 @@ MonoBehaviour:
   range: 1
   maxHealth: 20
   currentHealth: 0
-  attack: 7
-  defense: 2
   move: 3
+  strength: 7
+  defense: 2
+  speed: 4
+  dexterity: 4
+  luck: 4
+  temporaryWeaponHit: 80
 --- !u!4 &7089005437316275626
 Transform:
   m_ObjectHideFlags: 0
@@ -3065,9 +3073,13 @@ MonoBehaviour:
   range: 1
   maxHealth: 20
   currentHealth: 0
-  attack: 7
-  defense: 2
   move: 3
+  strength: 7
+  defense: 2
+  speed: 4
+  dexterity: 4
+  luck: 4
+  temporaryWeaponHit: 80
   squaresInRange: []
 --- !u!95 &7381858339304186704
 Animator:
@@ -3193,9 +3205,13 @@ MonoBehaviour:
   range: 2
   maxHealth: 7
   currentHealth: 0
-  attack: 15
-  defense: 0
   move: 5
+  strength: 15
+  defense: 0
+  speed: 5
+  dexterity: 6
+  luck: 12
+  temporaryWeaponHit: 80
   squaresInRange: []
 --- !u!58 &7672897891443360040
 CircleCollider2D:
@@ -3261,9 +3277,13 @@ MonoBehaviour:
   range: 3
   maxHealth: 10
   currentHealth: 0
-  attack: 5
-  defense: 1
   move: 4
+  strength: 5
+  defense: 1
+  speed: 6
+  dexterity: 7
+  luck: 16
+  temporaryWeaponHit: 80
 --- !u!58 &7989783776711004171
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -3350,9 +3370,13 @@ MonoBehaviour:
   range: 3
   maxHealth: 10
   currentHealth: 0
-  attack: 5
-  defense: 1
   move: 4
+  strength: 5
+  defense: 1
+  speed: 30
+  dexterity: 7
+  luck: 16
+  temporaryWeaponHit: 80
   squaresInRange: []
 --- !u!1 &9071645518214525139
 GameObject:

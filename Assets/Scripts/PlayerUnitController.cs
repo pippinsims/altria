@@ -79,8 +79,9 @@ public class PlayerUnitController : Unit
 		}
 	}
 
-	new void EndTurn()
+	protected override void EndTurn()
 	{
+		print("plend");
 		base.EndTurn();
 		ResetSquaresInRange();
 		tm.MaybeUpdateCurrentTeam();

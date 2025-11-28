@@ -50,8 +50,9 @@ public class AiUnitController : Unit
 	/// <summary>
     /// resets target unit, informs team manager that a unit's turn is over
     /// </summary>
-	new void EndTurn()
+	protected override void EndTurn()
 	{
+		print("enend");
 		if(moveSpeed == 1f)
 		{
 			print("Turn ended");
@@ -242,7 +243,7 @@ public class AiUnitController : Unit
 		//chsn = lowest health after attack out of the people in range
 		foreach(Unit unit in enemiesInRange)
 		{
-			if(chsn == null || (chsn.currentHealth - (attack - chsn.defense) > unit.currentHealth - (attack - unit.defense)))
+			if(chsn == null || IsWeaker(chsn, unit))
 			{
 				chsn = unit;
 			}
@@ -284,7 +285,7 @@ public class AiUnitController : Unit
 						else if (RelevantDistance(chsn) <= move - 1 + range)                                                            
 						{
 							//and current is also in range and current is weaker than saved
-							if ((relDist <= move - 1 + range) && (chsn.currentHealth - (attack - chsn.defense) > unit.currentHealth - (attack - unit.defense)))
+							if ((relDist <= move - 1 + range) && IsWeaker(chsn, unit))
 							{
 								if (moveSpeed == 1f)
 									print("new unit is in range and weaker than saved");
@@ -302,7 +303,7 @@ public class AiUnitController : Unit
 								chsn = unit;                                                                                        
 							}
 							//if current is also outside of range and is weaker than saved
-							else if (chsn.currentHealth - (attack - chsn.defense) > unit.currentHealth - (attack - unit.defense))   
+							else if (IsWeaker(chsn, unit))   
 							{
 								if (moveSpeed == 1f)
 									print("both are outside of range, but new unit is weaker");
@@ -318,6 +319,11 @@ public class AiUnitController : Unit
 			print("chosen unit: " + chsn.gameObject.name + ", " + RelevantDistance(chsn) + " spaces away.");
 		return chsn;
 	}
+
+	private bool IsWeaker(Unit chosen, Unit compareTo)
+    {
+        return chosen.currentHealth - (strength - chosen.defense) > compareTo.currentHealth - (strength - compareTo.defense); //TODO: not a great formula, fix.
+    }
 
 	/// <summary>
     /// Returns the number of spaces this unit must cross in order to have the same position as <paramref name="unitToAttack"/>.
