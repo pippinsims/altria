@@ -25,33 +25,31 @@ public class UnitPageController : MonoBehaviour
 
     void Update()
     {
-        bool unitIsSelected = (tm.selectedUnitIndex >= 0);
-        
-            gameObject.GetComponent<Image>().enabled = false;
-            healthText.enabled = false;
-            attackText.enabled = false;
-            defenseText.enabled = false;
-            rangeText.enabled = false;
-            moveText.enabled = false;
-        if(unitIsSelected)
+        gameObject.GetComponent<Image>().enabled = false;
+        healthText.enabled = false;
+        attackText.enabled = false;
+        defenseText.enabled = false;
+        rangeText.enabled = false;
+        moveText.enabled = false;
+
+        if(currentUnit != null)
         {
-            currentUnit = tm.teams[tm.currentTeamIndex].members[tm.selectedUnitIndex];
-            if(currentUnit.showUI)
-            {
-                gameObject.GetComponent<Image>().enabled = unitIsSelected;
-                healthText.enabled = unitIsSelected;
-                attackText.enabled = unitIsSelected;
-                defenseText.enabled = unitIsSelected;
-                rangeText.enabled = unitIsSelected;
-                moveText.enabled = unitIsSelected;
-                healthText.text = ("HP:" + currentUnit.currentHealth + "/" + currentUnit.maxHealth);
-                attackText.text = ("A:" + currentUnit.strength);
-                defenseText.text = ("D:" + currentUnit.defense);
-                rangeText.text = ("R:" + currentUnit.range);
-                moveText.text = ("M:" + (currentUnit.move - 1));
-            }
+            gameObject.GetComponent<Image>().enabled = true;
+            defenseText.enabled = true;
+            healthText.enabled  = true;
+            attackText.enabled  = true;
+            rangeText.enabled   = true;
+            moveText.enabled    = true;
+            defenseText.text    = "D:"  + currentUnit.defense;
+            healthText.text     = "HP:" + currentUnit.currentHealth + "/" + currentUnit.maxHealth;
+            attackText.text     = "A:"  + currentUnit.strength;
+            rangeText.text      = "R:"  + currentUnit.range;
+            moveText.text       = "M:"  + (currentUnit.move - 1);
         }
-        
-        
+
+        if (Input.GetKeyDown(KeyCode.Escape)) //TODO: add right click on nobody check
+        {
+            currentUnit = null;
+        }
     }
 }

@@ -1046,7 +1046,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2135546499
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1069,7 +1069,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 3000, y: 3000}
+  m_SizeDelta: {x: 100, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2135546500
 MonoBehaviour:
@@ -1096,7 +1096,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2135546498}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -2358,10 +2358,10 @@ MonoBehaviour:
   spawnLocation: {x: -8, y: -5}
   targetSquare: {fileID: 0}
   currentTarget: {fileID: 0}
+  page: {fileID: 0}
   moveSpeed: 10
   team: 1
   savedColor: {r: 0, g: 0, b: 0, a: 0}
-  showUI: 0
   animator: {fileID: 0}
   isMyTurn: 0
   isSelected: 0
@@ -2947,10 +2947,10 @@ MonoBehaviour:
   spawnLocation: {x: -8, y: -6}
   targetSquare: {fileID: 0}
   currentTarget: {fileID: 0}
+  page: {fileID: 0}
   moveSpeed: 10
   team: 1
   savedColor: {r: 0, g: 0, b: 0, a: 0}
-  showUI: 0
   animator: {fileID: 0}
   isMyTurn: 0
   isSelected: 0
@@ -3060,10 +3060,10 @@ MonoBehaviour:
   spawnLocation: {x: -8, y: 6}
   targetSquare: {fileID: 0}
   currentTarget: {fileID: 0}
+  page: {fileID: 0}
   moveSpeed: 10
   team: 0
   savedColor: {r: 0, g: 0, b: 0, a: 0}
-  showUI: 0
   animator: {fileID: 0}
   isMyTurn: 1
   isSelected: 0
@@ -3192,10 +3192,10 @@ MonoBehaviour:
   spawnLocation: {x: -8, y: 5}
   targetSquare: {fileID: 0}
   currentTarget: {fileID: 0}
+  page: {fileID: 0}
   moveSpeed: 10
   team: 0
   savedColor: {r: 0, g: 0, b: 0, a: 0}
-  showUI: 0
   animator: {fileID: 0}
   isMyTurn: 1
   isSelected: 0
@@ -3264,10 +3264,10 @@ MonoBehaviour:
   spawnLocation: {x: -7, y: -6}
   targetSquare: {fileID: 0}
   currentTarget: {fileID: 0}
+  page: {fileID: 0}
   moveSpeed: 10
   team: 1
   savedColor: {r: 0, g: 0, b: 0, a: 0}
-  showUI: 0
   animator: {fileID: 0}
   isMyTurn: 0
   isSelected: 0
@@ -3357,10 +3357,10 @@ MonoBehaviour:
   spawnLocation: {x: -7, y: 6}
   targetSquare: {fileID: 0}
   currentTarget: {fileID: 0}
+  page: {fileID: 0}
   moveSpeed: 10
   team: 0
   savedColor: {r: 0, g: 0, b: 0, a: 0}
-  showUI: 0
   animator: {fileID: 0}
   isMyTurn: 1
   isSelected: 0

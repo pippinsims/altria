@@ -52,7 +52,6 @@ public class AiUnitController : Unit
     /// </summary>
 	protected override void EndTurn()
 	{
-		print("enend");
 		if(moveSpeed == 1f)
 		{
 			print("Turn ended");

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Unit : MonoBehaviour
@@ -9,12 +10,12 @@ public class Unit : MonoBehaviour
     private Vector2 spawnLocation;
 	public SquareController targetSquare;
 	public TileController currentTarget;
+	public UnitPageController page;
 	internal List<Unit> enemiesInRange = new List<Unit>();
 	
 	public float moveSpeed = 10f;
 	public int team;
 	public Color savedColor;
-	public bool showUI = false;
 	public Animator animator;
 	internal PathfindingManager pm;
 	internal TeamManager tm;
@@ -51,6 +52,7 @@ public class Unit : MonoBehaviour
 	
 	protected void Start()
 	{	
+		page = GameObject.Find("Unit Page").GetComponent<UnitPageController>();
 		bc = GameObject.Find("Board").GetComponent<BoardController>();
 		tm = GameObject.Find("Team Manager").GetComponent<TeamManager>();
 		pm = GameObject.Find("Pathfinding Manager").GetComponent<PathfindingManager>();
@@ -71,6 +73,14 @@ public class Unit : MonoBehaviour
 			GetComponent<CircleCollider2D>().enabled = false;
 			GetComponent<CircleCollider2D>().enabled = true;
 			if(mouseIsOver && !isMyTurn) OnClicked();
+		}
+		
+		if(Input.GetMouseButtonUp(1))
+		{
+			if(mouseIsOver)
+			{
+				page.currentUnit = this;
+			}
 		}
 	}
 

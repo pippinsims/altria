@@ -52,22 +52,6 @@ public class PlayerUnitController : Unit
 			Move();
 		}
 
-		if (Input.GetMouseButtonUp(1))
-		{
-			if(!showUI)
-			{
-				if(mouseIsOver)
-				{
-					showUI = true;
-				}
-			}
-			else
-				showUI = false;
-
-			if(hasMoved)
-				hasAttacked = true;
-		}
-
 		if(hasMoved && enemiesInRange.Count == 0 && !hasAttacked)
 		{
 			hasAttacked = true;
@@ -81,7 +65,6 @@ public class PlayerUnitController : Unit
 
 	protected override void EndTurn()
 	{
-		print("plend");
 		base.EndTurn();
 		ResetSquaresInRange();
 		tm.MaybeUpdateCurrentTeam();

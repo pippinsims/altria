@@ -16,12 +16,12 @@ public class BoardController : MonoBehaviour
         transform.position = new Vector2(-length / 2, -height / 2);
         Physics2D.queriesHitTriggers = true;
         for (float x = 0; x < length; x += 1)
-         {
+        {
             for (float y = 0; y < height; y += 1)
-             {
-                 Instantiate(squarePrefab, new Vector2(transform.position.x + x, transform.position.y + y), Quaternion.identity,transform);
-             }
-         }
+            {
+                Instantiate(squarePrefab, new Vector2(transform.position.x + x, transform.position.y + y), Quaternion.identity,transform);
+            }
+        }
     }
 
     public void UpdateAllUnitSquares()

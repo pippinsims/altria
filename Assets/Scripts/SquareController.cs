@@ -8,10 +8,12 @@ public class SquareController : MonoBehaviour
     public TeamManager tm;
     private Color savedColor;
     public bool isInRange = false;
+    public bool isGlowy;
     private BoardController bc;
 
     void Start()
     {
+        isGlowy = Random.value < 0.1f;
         tm = GameObject.Find("Team Manager").GetComponent<TeamManager>();
         bc = gameObject.transform.parent.gameObject.GetComponent<BoardController>();
         savedColor = GetComponent<SpriteRenderer>().color;
@@ -24,7 +26,11 @@ public class SquareController : MonoBehaviour
             bc.currentUnit.targetSquare = this;
         }
 
-        if(mouseIsOver)
+        if(isGlowy)
+        {
+            GetComponent<SpriteRenderer>().color = Color.green;
+        }
+        else if(mouseIsOver)
         {
             GetComponent<SpriteRenderer>().color = Color.magenta;
         }
