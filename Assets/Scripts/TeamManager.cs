@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class TeamManager : MonoBehaviour
 {
+    //TODO: when someone dies during enemy turn, the next enemy doesn't take its turn properly
     public List<Team> teams = new List<Team>();
     public int currentTeamIndex = -1;
     public int selectedUnitIndex = -1; //-1 if there is no selected unit

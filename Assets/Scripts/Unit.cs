@@ -5,8 +5,7 @@ using UnityEngine;
 public class Unit : MonoBehaviour
 {
 	[Header ("General Data")]
-	[SerializeField]
-    private Vector2 spawnLocation;
+    public Vector2 spawnLocation;
 	public SquareController targetSquare;
 	public TileController currentTarget;
 	internal List<Unit> enemiesInRange = new List<Unit>();
