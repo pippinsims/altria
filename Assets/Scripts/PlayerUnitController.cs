@@ -81,7 +81,6 @@ public class PlayerUnitController : Unit
 
 	protected override void EndTurn()
 	{
-		print("plend");
 		base.EndTurn();
 		ResetSquaresInRange();
 		tm.MaybeUpdateCurrentTeam();

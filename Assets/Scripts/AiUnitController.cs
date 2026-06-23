@@ -52,7 +52,6 @@ public class AiUnitController : Unit
     /// </summary>
 	protected override void EndTurn()
 	{
-		print("enend");
 		if(moveSpeed == 1f)
 		{
 			print("Turn ended");
@@ -145,7 +144,7 @@ public class AiUnitController : Unit
 		}
 		if (furthest != null)
 		{
-			print("furthest: " + furthest.transform.position);
+			//print("furthest: " + furthest.transform.position);
 			return furthest.gameObject.GetComponent<TileController>();
 		}
 		else
@@ -202,31 +201,31 @@ public class AiUnitController : Unit
 
 		if (distToTargetUnit >= range + move - 1)
 		{
-			print("target further than or at range + move");
+			//print("target further than or at range + move");
 			return PointOnPathFromStart(path, move);
 		}
 		else if(distToTargetUnit > range)
 		{
-			print("target further than range");
+			//print("target further than range");
 			return PointOnPathFromStart(path, distToTargetUnit + 1 - range); //+ 1 because PointOnPath includes the original position
 		}
 		else
 		{
 			if (distToTargetUnit == range)
 			{
-				print("target at range");
+				//print("target at range");
 				return FindCurrentSquare();
 			}
 			else
 			{
-				print("target closer than range");
+				//print("target closer than range");
 
 				TileController escapeTile = FindEscapeTile();
 				if (escapeTile != null)
 					return escapeTile;
 				else
 				{
-					print("no escape path!");
+					//print("no escape path!");
 					return FindCurrentSquare();
 				}
 			}
@@ -258,8 +257,8 @@ public class AiUnitController : Unit
 	{
 		Unit chsn = null;
 		int relDist;
-		if (moveSpeed == 1f)
-			print("move: " + move + ", range: " + range);
+		//if (moveSpeed == 1f)
+			//print("move: " + move + ", range: " + range);
 		foreach (Team t in tm.teams)
 		{
 			if (tm.teams.IndexOf(t) != team)
@@ -268,8 +267,6 @@ public class AiUnitController : Unit
 				foreach (Unit unit in t.members)
 				{
 					relDist = RelevantDistance(unit);
-					if (moveSpeed == 1f)
-						print(relDist);
 
 					//if there is a path to current
 					if ((relDist >= 0))																								
@@ -277,8 +274,6 @@ public class AiUnitController : Unit
 						//if current is first on list
 						if (chsn == null)                                                                                          
 						{
-							if (moveSpeed == 1f)
-								print("first unit in list");
 							chsn = unit;                                                                                            
 						}
 						//else if saved is in range
@@ -287,8 +282,8 @@ public class AiUnitController : Unit
 							//and current is also in range and current is weaker than saved
 							if ((relDist <= move - 1 + range) && IsWeaker(chsn, unit))
 							{
-								if (moveSpeed == 1f)
-									print("new unit is in range and weaker than saved");
+								//if (moveSpeed == 1f)
+									//print("new unit is in range and weaker than saved");
 								chsn = unit;                                                                                        
 							}
 						}
@@ -298,15 +293,15 @@ public class AiUnitController : Unit
 							//if current is in range
 							if (relDist <= move - 1 + range)																		
 							{
-								if (moveSpeed == 1f)
-									print("new unit is in range and saved is outside");
+								//if (moveSpeed == 1f)
+									//print("new unit is in range and saved is outside");
 								chsn = unit;                                                                                        
 							}
 							//if current is also outside of range and is weaker than saved
 							else if (IsWeaker(chsn, unit))   
 							{
-								if (moveSpeed == 1f)
-									print("both are outside of range, but new unit is weaker");
+								//if (moveSpeed == 1f)
+									//print("both are outside of range, but new unit is weaker");
 								chsn = unit;
 							}
 						}
@@ -315,8 +310,8 @@ public class AiUnitController : Unit
 			}
 		}
 		
-		if(moveSpeed == 1f && chsn != null)
-			print("chosen unit: " + chsn.gameObject.name + ", " + RelevantDistance(chsn) + " spaces away.");
+		//if(moveSpeed == 1f && chsn != null)
+			//print("chosen unit: " + chsn.gameObject.name + ", " + RelevantDistance(chsn) + " spaces away.");
 		return chsn;
 	}
 

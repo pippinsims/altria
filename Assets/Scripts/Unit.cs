@@ -75,7 +75,6 @@ public class Unit : MonoBehaviour
 
 	protected virtual void EndTurn()
 	{
-		print("nend");
 		isMyTurn = false;
 		targetSquare = null;
 		isSelected = false;
@@ -108,10 +107,12 @@ public class Unit : MonoBehaviour
 				
 				//TODO: MAKE p.CalculateHit IN THE UI, AS WELL AS AVOID
 				p.Attack(this);
-				if(SquareController.ManhattanDistance(transform, p.transform) <= range)
+				if(SquareController.ManhattanDistance(transform, p.transform) <= range && currentHealth > 0)
+				{
 					Attack(p);
-				(Unit a, Unit d, int m) = GetAdvantageResultsAgainst(p);
-				a.AttackMutipleTimes(d, m >= 5 ? m/5 : 0);
+					(Unit a, Unit d, int m) = GetAdvantageResultsAgainst(p);
+					a.AttackMutipleTimes(d, m >= 5 ? m/5 : 0);
+				}
 			}
 		}
 	}
@@ -153,12 +154,14 @@ public class Unit : MonoBehaviour
 
 	private void Die()
     {
-		if(tm.teams[team].members[tm.selectedUnitIndex] == this)
+		
+		if(tm.currentTeamIndex == team && tm.teams[team].members[tm.selectedUnitIndex] == this)
+		{
 			EndTurn();
+		}
         tm.RemoveUnit(this, team);
 		FindCurrentSquare().isObstruction = false;
-		Destroy(this.gameObject);
-		print("died");	
+		Destroy(this.gameObject);	
     }
 
 	private void Attack(Unit target)
@@ -169,7 +172,7 @@ public class Unit : MonoBehaviour
 
 	public void AttackMutipleTimes(Unit target, int num)
     {
-        for(int i = 0; i < num; i++) Attack(target);
+        for(int i = 0; i < num; i++) if(target.currentHealth > 0) Attack(target); else break;
     }
 
 	public TileController FindCurrentSquare()

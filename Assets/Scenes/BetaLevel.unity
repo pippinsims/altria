@@ -979,9 +979,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   toSpawn:
-  - {fileID: 7982867017470389707, guid: 6a65c71e7d1725a4b9bca111d3ed3b04, type: 3}
-  - {fileID: 7982867017470389707, guid: 6a65c71e7d1725a4b9bca111d3ed3b04, type: 3}
-  - {fileID: 7982867017470389707, guid: 6a65c71e7d1725a4b9bca111d3ed3b04, type: 3}
+  - {fileID: 3517025527685798071, guid: 201275d285977ca419041dab7d443d77, type: 3}
+  - {fileID: 3517025527685798071, guid: 201275d285977ca419041dab7d443d77, type: 3}
+  - {fileID: 3517025527685798071, guid: 201275d285977ca419041dab7d443d77, type: 3}
+  - {fileID: 3517025527685798071, guid: 201275d285977ca419041dab7d443d77, type: 3}
+  - {fileID: 3517025527685798071, guid: 201275d285977ca419041dab7d443d77, type: 3}
+  - {fileID: 3517025527685798071, guid: 201275d285977ca419041dab7d443d77, type: 3}
+  - {fileID: 3517025527685798071, guid: 201275d285977ca419041dab7d443d77, type: 3}
+  - {fileID: 3517025527685798071, guid: 201275d285977ca419041dab7d443d77, type: 3}
+  - {fileID: 3517025527685798071, guid: 201275d285977ca419041dab7d443d77, type: 3}
+  - {fileID: 3517025527685798071, guid: 201275d285977ca419041dab7d443d77, type: 3}
   spawnValues: Assets/Scenes/E.json
   AIHolder: {fileID: 1256446192}
 --- !u!4 &1556297954
@@ -3423,7 +3430,7 @@ MonoBehaviour:
   move: 4
   strength: 5
   defense: 1
-  speed: 30
+  speed: 6
   dexterity: 7
   luck: 16
   temporaryWeaponHit: 80

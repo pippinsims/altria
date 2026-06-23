@@ -14,21 +14,24 @@ public class TeamManager : MonoBehaviour
     void Start()
     {
         bc = GameObject.Find("Board").GetComponent<BoardController>();
+        sr = GetComponent<SpriteRenderer>();
+    }
+
+    public void SetTeams()
+    {
         GameObject[] gs = GameObject.FindGameObjectsWithTag("Unit");
         foreach(GameObject g in gs)
         {
             Unit u = g.GetComponent<Unit>();
             while(teams.Count < u.team+1)
             {
-                teams.Add(new Team(false));
+                teams.Add(new Team(true));
             }
             teams[u.team].members.Add(u);
         }
         //will be set at start of level
-        teams[1].isAi = true;
-        //teams[0].isAi = true;
+        teams[0].isAi = false;
 
-        sr = GetComponent<SpriteRenderer>();
         currentTeamIndex = 0;
         BeginTeamTurn(teams[currentTeamIndex]);
         bc.UpdateAllUnitSquares();
@@ -119,11 +122,28 @@ public class TeamManager : MonoBehaviour
 
     public void RemoveUnit(Unit u, int teamIndex)
     {
+        teams[teamIndex].members.IndexOf(u);
         teams[teamIndex].members.Remove(u);
+        if(currentTeamIndex == teamIndex)
+        {
+            if(teams[teamIndex].isAi)
+            {
+                foreach (var mem in teams[teamIndex].members)
+                {
+                    if(mem.isMyTurn)
+                    {
+                        selectedUnitIndex = teams[teamIndex].members.IndexOf(mem);
+                        break;
+                    }
+                }
+            }else
+                selectedUnitIndex = -1;
+        }
+        
         if(teams[teamIndex].members.Count <= 0)
         {
             teams.Remove(teams[teamIndex]);
-            ResetTeamIndexes(teamIndex);
+            ResetTeamIndexes();
             if(currentTeamIndex > teamIndex)
             {
                 currentTeamIndex--;
@@ -131,7 +151,7 @@ public class TeamManager : MonoBehaviour
         }
     }
 
-    void ResetTeamIndexes(int deletedTeamIndex)
+    void ResetTeamIndexes()
     {
         foreach(Team t in teams)
         {

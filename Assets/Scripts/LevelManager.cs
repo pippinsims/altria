@@ -22,18 +22,24 @@ public class LevelManager : MonoBehaviour
 
     public List<GameObject> toSpawn;
     public string spawnValues;
+    private TeamManager tm;
 
     public GameObject AIHolder;
 
     void Start()
     {
+        tm = GameObject.Find("Team Manager").GetComponent<TeamManager>();
         var entries = Load(spawnValues);
         for (int i = 0; i < toSpawn.Count; i++)
         {
             var e = entries[i];
-            toSpawn[i].GetComponent<AiUnitController>().team = e.Team;
-            toSpawn[i].GetComponent<AiUnitController>().spawnLocation = new(e.X, e.Y);
-            Instantiate(toSpawn[i], AIHolder.transform);
+            if(toSpawn[i] != null)
+            {
+                toSpawn[i].GetComponent<AiUnitController>().team = e.Team;
+                toSpawn[i].GetComponent<AiUnitController>().spawnLocation = new(e.X, e.Y);
+                Instantiate(toSpawn[i], AIHolder.transform);
+            }
         }
+        tm.GetComponent<TeamManager>().SetTeams();
     }
 }
