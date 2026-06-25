@@ -8,13 +8,13 @@ public class MovementHandler : MonoBehaviour
     private Vector3 direction;
 	internal bool isCurrentlyMoving = false;
 	internal PathfindingManager pm;
-	internal BoardController bc;
+	internal BoardController board;
 	internal bool stepping = false;
 
 	public void Begin(Unit unit, BoardController bController, PathfindingManager pManager)
 	{
 		myUnit = unit;
-		bc = bController;
+		board = bController;
 		pm = pManager;
 	}
 
@@ -22,7 +22,7 @@ public class MovementHandler : MonoBehaviour
 	{
 		isCurrentlyMoving = true;
 
-		StartCoroutine(WalkToTile(pm.CreatePathStack(myUnit.FindCurrentSquare(), myUnit.targetSquare.transform, myUnit.move)));
+		StartCoroutine(WalkToTile(pm.CreatePathStack(myUnit.GetCurrentSquare(), myUnit.targetSquare.transform, myUnit.move)));
 	}
 
 	IEnumerator WalkToTile(Stack<TileController> movePath)
@@ -38,21 +38,15 @@ public class MovementHandler : MonoBehaviour
 			}
 		}
 
-		bc.UpdateAllUnitSquares();
-		myUnit.CheckForEnemiesInRange();
-		if (!(myUnit is AiUnitController))
-		{
-			GetComponent<PlayerUnitController>().ResetSquaresInRange();
-			GetComponent<PlayerUnitController>().NotifySquaresInArea(myUnit.range);
-		}
+		board.UpdateAllUnitSquares();
 		isCurrentlyMoving = false;
-		myUnit.hasMoved = true;
+		myUnit.OnMovementEnded();
 	}
 
 	void Step()
 	{
-		if((Mathf.Abs(transform.position.x - myUnit.currentTarget.gameObject.transform.position.x)  < 0.1f 
-		&& Mathf.Abs(transform.position.y - myUnit.currentTarget.gameObject.transform.position.y) < 0.1f))
+		if(Mathf.Abs(transform.position.x - myUnit.currentTarget.gameObject.transform.position.x) < 0.1f 
+		&& Mathf.Abs(transform.position.y - myUnit.currentTarget.gameObject.transform.position.y) < 0.1f)
 		{
 			transform.position = myUnit.currentTarget.gameObject.transform.position;
 			myUnit.currentTarget = null;

@@ -149,10 +149,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9c6cc5e117d68449b9829ec5c4ab031, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentTeamIndex: -1
-  selectedUnitIndex: -1
-  bc: {fileID: 0}
-  sr: {fileID: 0}
 --- !u!4 &17547176
 Transform:
   m_ObjectHideFlags: 0
@@ -215,15 +211,15 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 999d04c0ea94ccc41b3d80788160695b, type: 3}
+  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.24, y: 0.24}
+  m_Size: {x: 0.2, y: 0.2}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &109578111
@@ -568,7 +564,6 @@ MonoBehaviour:
   length: 17
   height: 13
   squarePrefab: {fileID: 1098549851993120094, guid: 1a4726776830cfc4aaec783e2096921e, type: 3}
-  currentUnit: {fileID: 0}
 --- !u!4 &800131394
 Transform:
   m_ObjectHideFlags: 0
@@ -2355,19 +2350,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74fd6754263eb7e42810aa6be105cd6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mouseIsOver: 0
   spawnLocation: {x: -8, y: -5}
   targetSquare: {fileID: 0}
   currentTarget: {fileID: 0}
   page: {fileID: 0}
+  enemiesInRange: []
+  interactiblesInRange: []
   moveSpeed: 10
   team: 1
   savedColor: {r: 0, g: 0, b: 0, a: 0}
   animator: {fileID: 0}
-  isMyTurn: 0
-  isSelected: 0
-  hasMoved: 0
-  hasAttacked: 0
-  mouseIsOver: 0
+  pm: {fileID: 0}
+  teams: {fileID: 0}
+  bc: {fileID: 0}
   range: 2
   maxHealth: 7
   currentHealth: 0
@@ -2944,19 +2940,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74fd6754263eb7e42810aa6be105cd6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mouseIsOver: 0
   spawnLocation: {x: -8, y: -6}
   targetSquare: {fileID: 0}
   currentTarget: {fileID: 0}
   page: {fileID: 0}
+  enemiesInRange: []
+  interactiblesInRange: []
   moveSpeed: 10
   team: 1
   savedColor: {r: 0, g: 0, b: 0, a: 0}
   animator: {fileID: 0}
-  isMyTurn: 0
-  isSelected: 0
-  hasMoved: 0
-  hasAttacked: 0
-  mouseIsOver: 0
+  pm: {fileID: 0}
+  teams: {fileID: 0}
+  bc: {fileID: 0}
   range: 1
   maxHealth: 20
   currentHealth: 0
@@ -3057,19 +3054,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7628551efa9fc9a48a218b9573afea5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mouseIsOver: 0
   spawnLocation: {x: -8, y: 6}
   targetSquare: {fileID: 0}
   currentTarget: {fileID: 0}
   page: {fileID: 0}
+  enemiesInRange: []
+  interactiblesInRange: []
   moveSpeed: 10
   team: 0
   savedColor: {r: 0, g: 0, b: 0, a: 0}
   animator: {fileID: 0}
-  isMyTurn: 1
-  isSelected: 0
-  hasMoved: 0
-  hasAttacked: 0
-  mouseIsOver: 0
+  pm: {fileID: 0}
+  teams: {fileID: 0}
+  bc: {fileID: 0}
   range: 1
   maxHealth: 20
   currentHealth: 0
@@ -3189,19 +3187,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7628551efa9fc9a48a218b9573afea5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mouseIsOver: 0
   spawnLocation: {x: -8, y: 5}
   targetSquare: {fileID: 0}
   currentTarget: {fileID: 0}
   page: {fileID: 0}
+  enemiesInRange: []
+  interactiblesInRange: []
   moveSpeed: 10
   team: 0
   savedColor: {r: 0, g: 0, b: 0, a: 0}
   animator: {fileID: 0}
-  isMyTurn: 1
-  isSelected: 0
-  hasMoved: 0
-  hasAttacked: 0
-  mouseIsOver: 0
+  pm: {fileID: 0}
+  teams: {fileID: 0}
+  bc: {fileID: 0}
   range: 2
   maxHealth: 7
   currentHealth: 0
@@ -3261,19 +3260,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74fd6754263eb7e42810aa6be105cd6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mouseIsOver: 0
   spawnLocation: {x: -7, y: -6}
   targetSquare: {fileID: 0}
   currentTarget: {fileID: 0}
   page: {fileID: 0}
+  enemiesInRange: []
+  interactiblesInRange: []
   moveSpeed: 10
   team: 1
   savedColor: {r: 0, g: 0, b: 0, a: 0}
   animator: {fileID: 0}
-  isMyTurn: 0
-  isSelected: 0
-  hasMoved: 0
-  hasAttacked: 0
-  mouseIsOver: 0
+  pm: {fileID: 0}
+  teams: {fileID: 0}
+  bc: {fileID: 0}
   range: 3
   maxHealth: 10
   currentHealth: 0
@@ -3354,19 +3354,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7628551efa9fc9a48a218b9573afea5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mouseIsOver: 0
   spawnLocation: {x: -7, y: 6}
   targetSquare: {fileID: 0}
   currentTarget: {fileID: 0}
   page: {fileID: 0}
+  enemiesInRange: []
+  interactiblesInRange: []
   moveSpeed: 10
   team: 0
   savedColor: {r: 0, g: 0, b: 0, a: 0}
   animator: {fileID: 0}
-  isMyTurn: 1
-  isSelected: 0
-  hasMoved: 0
-  hasAttacked: 0
-  mouseIsOver: 0
+  pm: {fileID: 0}
+  teams: {fileID: 0}
+  bc: {fileID: 0}
   range: 3
   maxHealth: 10
   currentHealth: 0

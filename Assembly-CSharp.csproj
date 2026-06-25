@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\PlayerUnitController.cs" />
+    <Compile Include="Assets\Scripts\Hoverable.cs" />
     <Compile Include="Assets\Scripts\Unit.cs" />
     <Compile Include="Assets\Scripts\PathfindingManager.cs" />
     <Compile Include="Assets\Scripts\TeamManager.cs" />
@@ -58,6 +59,7 @@
     <Compile Include="Assets\Scripts\BoardController.cs" />
     <Compile Include="Assets\Scripts\AiUnitController.cs" />
     <Compile Include="Assets\Scripts\UnitPageController.cs" />
+    <Compile Include="Assets\Scripts\Utils.cs" />
     <Compile Include="Assets\Scripts\CameraController.cs" />
     <Reference Include="UnityEngine">
       <HintPath>C:\Program Files\Unity\Hub\Editor\6000.2.14f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>

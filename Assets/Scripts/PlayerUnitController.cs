@@ -1,73 +1,81 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using static Utils;
 
 public class PlayerUnitController : Unit
 {
-	public List<SquareController> squaresInRange = new List<SquareController>();
+	public List<SquareController> squaresInRange = new();
 	new void Update()
 	{
 		base.Update();
-		if(isSelected)
+		if(IsSelected)
 		{
 			GetComponent<SpriteRenderer>().color = Color.yellow;
 		}
-
-		if (Input.GetMouseButtonUp(0))
+		else if(Input.GetMouseButtonUp(0) && mouseIsOver && IsMyTurn)
 		{
-			if (mouseIsOver && isMyTurn && !isSelected)
+			if (teams.SelectedUnit != null)
 			{
-				if (tm.selectedUnitIndex >= 0)
+				var old = teams.SelectedUnit;
+				if(old.IsMyTurn && old.HasMoved)
 				{
-					Unit oldSelectedUnit = tm.teams[team].members[tm.selectedUnitIndex];
+					old.FinishActions();
+					old.EndTurn();
+				}
+				if(old is PlayerUnitController oldp)
+					oldp.Unselect();
+			}
+            // print(name+" selfselect");
+			teams.SelectUnit(this);
+			NotifyAccessibleSquares(move);
+		}
 
-					if (oldSelectedUnit != null)
-					{
-						tm.UpdateSelectedUnit(this);
-						if (oldSelectedUnit.isMyTurn)
-						{
-							if (oldSelectedUnit.hasMoved)
-								oldSelectedUnit.hasAttacked = true;
-							oldSelectedUnit.isSelected = false;
-							if(oldSelectedUnit is PlayerUnitController)
-								oldSelectedUnit.gameObject.GetComponent<PlayerUnitController>().ResetSquaresInRange();
-						}
-						NotifyAccessibleSquares(move);
-					}
-					else
-					{
-						Debug.Log("ERROR!! selectedUnitIndex was >= 0 but selectedUnit was null!");
-					}
-				}
-				else
-				{
-					tm.UpdateSelectedUnit(this);
-					NotifyAccessibleSquares(move);
-				}
+		if(!HasMoved)
+		{
+			if(targetSquare != null)
+			{
+				Move();
 			}
 		}
-
-		if(!hasMoved && targetSquare != null)
+		else
 		{
-			Move();
-		}
+			if(enemiesInRange.Count == 0 && !HasAttacked)
+			{
+				print(name+":hasattacked");
+				HasAttacked = true;
+			}
 
-		if(hasMoved && enemiesInRange.Count == 0 && !hasAttacked)
-		{
-			hasAttacked = true;
-		}
+			if(interactiblesInRange.Count == 0 && !HasInteracted)
+			{
+				print(name+":hasinteracted");
+				HasInteracted = true;
+			}
 
-		if(hasAttacked && hasMoved && isMyTurn)
-		{
-			EndTurn();
+			if(Keyboard.current.escapeKey.isPressed && (!HasAttacked || !HasInteracted /*Actions.Any(a=>a.isCompleted)*/) && page.currentUnit == null)
+			{
+				FinishActions();
+			}
+
+			if(HasInteracted && HasAttacked && IsMyTurn)
+			{
+				EndTurn();
+			}
 		}
 	}
 
-	protected override void EndTurn()
+	public void Unselect()
 	{
-		base.EndTurn();
+		// print(name+" unselected");
 		ResetSquaresInRange();
-		tm.MaybeUpdateCurrentTeam();
+		IsSelected = false;
+	}
+
+	public override void EndTurn()
+	{
+		ResetSquaresInRange();
+		base.EndTurn();
 	}
 
 	/// <summary>
@@ -99,7 +107,7 @@ public class PlayerUnitController : Unit
 
 			foreach(SquareController square in circleCastSquares)
 			{
-				if(SquareController.ManhattanDistance(transform, square.transform) <= radius)
+				if(ManhattanDistance(transform, square.transform) <= radius)
 				{
 					squaresInRange.Add(square);
 				}
@@ -112,7 +120,13 @@ public class PlayerUnitController : Unit
 		}
 	}
 
-	//Squares accessible by move
+	/// <summary>
+	/// Sets the <c>isInRange</c> field to <c>true</c> for all accessible squares
+	/// within the specified <paramref name="radius"/>.
+	/// </summary>
+	/// <param name="radius">
+	/// The maximum distance from the origin square to evaluate accessibility.
+	/// </param>
 	void NotifyAccessibleSquares(int radius)
 	{
 		List<RaycastHit2D> hits = new List<RaycastHit2D>();
@@ -130,9 +144,9 @@ public class PlayerUnitController : Unit
 			TileController pathEndTile;
 			foreach(SquareController square in circleCastSquares)
 			{
-				if(SquareController.ManhattanDistance(transform, square.transform) <= radius)
+				if(ManhattanDistance(transform, square.transform) <= radius)
 				{
-					pathEndTile = pm.FindPath(FindCurrentSquare(), square.transform, false);
+					pathEndTile = pm.FindPath(GetCurrentSquare(), square.transform, false);
 					if (pathEndTile != null && pm.FindPathLength(pathEndTile) <= move) 
 					{
 						squaresInRange.Add(square);

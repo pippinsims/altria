@@ -25,26 +25,21 @@ public class UnitPageController : MonoBehaviour
 
     void Update()
     {
-        gameObject.GetComponent<Image>().enabled = false;
-        healthText.enabled = false;
-        attackText.enabled = false;
-        defenseText.enabled = false;
-        rangeText.enabled = false;
-        moveText.enabled = false;
-
-        if(currentUnit != null)
+        if(
+            gameObject.GetComponent<Image>().enabled = 
+            defenseText.enabled = 
+            healthText.enabled = 
+            attackText.enabled = 
+            rangeText.enabled = 
+            moveText.enabled = 
+            currentUnit != null
+        )
         {
-            gameObject.GetComponent<Image>().enabled = true;
-            defenseText.enabled = true;
-            healthText.enabled  = true;
-            attackText.enabled  = true;
-            rangeText.enabled   = true;
-            moveText.enabled    = true;
-            defenseText.text    = "D:"  + currentUnit.defense;
-            healthText.text     = "HP:" + currentUnit.currentHealth + "/" + currentUnit.maxHealth;
-            attackText.text     = "A:"  + currentUnit.strength;
-            rangeText.text      = "R:"  + currentUnit.range;
-            moveText.text       = "M:"  + (currentUnit.move - 1);
+            defenseText.text = "D:"  + currentUnit.defense;
+            healthText.text  = "HP:" + currentUnit.currentHealth + "/" + currentUnit.maxHealth;
+            attackText.text  = "A:"  + currentUnit.strength;
+            rangeText.text   = "R:"  + currentUnit.range;
+            moveText.text    = "M:"  + (currentUnit.move - 1);
         }
 
         if (Input.GetKeyDown(KeyCode.Escape)) //TODO: add right click on nobody check

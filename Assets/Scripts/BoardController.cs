@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class BoardController : MonoBehaviour
 {
@@ -8,7 +9,6 @@ public class BoardController : MonoBehaviour
     public int height=13;
     public GameObject squarePrefab;
     private TeamManager tm;
-    public Unit currentUnit;
 
     void Awake()
     {
@@ -24,6 +24,12 @@ public class BoardController : MonoBehaviour
         }
     }
 
+    void Start()
+    {
+        foreach(Transform c in transform)
+            c.gameObject.GetComponent<TileController>().isObstruction = c.GetComponent<SquareController>().isGlowy;
+    }
+
     public void UpdateAllUnitSquares()
     {
         ClearAllUnitSquares();
@@ -34,7 +40,8 @@ public class BoardController : MonoBehaviour
     {
         foreach(Transform child in transform)
         {
-            child.gameObject.GetComponent<TileController>().isObstruction = false;
+            var c = child.gameObject.GetComponent<TileController>();
+            if(c.occupant != null) c.isObstruction = false;
         }
     }
 
@@ -45,8 +52,8 @@ public class BoardController : MonoBehaviour
         {
             foreach (Unit unit in t.members)
             {
-                unit.FindCurrentSquare().occupant = unit;
-                unit.FindCurrentSquare().isObstruction = true;//TO BE ERASED
+                unit.GetCurrentSquare().occupant = unit;
+                unit.GetCurrentSquare().isObstruction = true;//TO BE ERASED
             }
         }
     }
@@ -60,13 +67,13 @@ public class BoardController : MonoBehaviour
         }
 	}
 
-    /*public TileController TileAtTransform(Transform t)
+    public SquareController SquareAt(Transform t)
     {
         foreach(Transform child in transform)
         {
             if (child.position == t.position)
-                return child.gameObject.GetComponent<TileController>();
+                return child.gameObject.GetComponent<SquareController>();
         }
         return null;
-    }*/
+    }
 }

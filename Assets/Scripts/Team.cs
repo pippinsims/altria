@@ -5,9 +5,9 @@ using UnityEngine;
 public class Team
 {
     public bool isAi;
-    public List<Unit> members = new List<Unit>();
+    public List<Unit> members = new();
 
-    public Team(bool ai)
+    public Team(bool ai = false)
     {
         isAi = ai;
     }

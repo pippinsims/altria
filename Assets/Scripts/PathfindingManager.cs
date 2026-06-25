@@ -1,6 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Mono.Cecil.Cil;
+using Unity.Collections;
 using UnityEngine;
+using UnityEngine.Diagnostics;
+using UnityEngine.XR;
+using static Utils;
 
 public class PathfindingManager: MonoBehaviour
 {
@@ -55,7 +61,7 @@ public class PathfindingManager: MonoBehaviour
 
 		startTile.parentTile = null;
 		startTile.G = 0;
-		startTile.H = SquareController.ManhattanDistance(startTile.transform, end);
+		startTile.H = ManhattanDistance(startTile.transform, end);
 		startTile.F = startTile.G + startTile.H;
 
 		while(open.Count > 0)
@@ -96,12 +102,12 @@ public class PathfindingManager: MonoBehaviour
 					}
 				}
 
-				float tempG = currentTile.G + SquareController.ManhattanDistance(currentTile.transform, nbr.transform);
+				float tempG = currentTile.G + ManhattanDistance(currentTile.transform, nbr.transform);
 				if(tempG < nbr.G)
                 {
 					nbr.parentTile = currentTile;
 					nbr.G = tempG;
-					nbr.H = SquareController.ManhattanDistance(nbr.transform, end);
+					nbr.H = ManhattanDistance(nbr.transform, end);
 					nbr.F = nbr.G + nbr.H;
 
 					if (!open.Contains(nbr))
@@ -159,40 +165,13 @@ public class PathfindingManager: MonoBehaviour
 
 	private List<TileController> GetNeighbors(TileController tile)
 	{
-		List<TileController> neighbors = new List<TileController>();
-
-		for(int i = 0; i < 4; i++)
-		{
-			TileController newNeighbor;
-			switch(i)
-			{
-				case 0:
-					newNeighbor = tile.FindNeighbor(Vector2.left);
-					break;
-
-				case 1:
-					newNeighbor = tile.FindNeighbor(Vector2.up);
-					break;
-
-				case 2:
-					newNeighbor = tile.FindNeighbor(Vector2.right);
-					break;
-
-				case 3:
-					newNeighbor = tile.FindNeighbor(Vector2.down);
-					break;
-
-				default:
-					newNeighbor = null;
-					break;
-			}
-			if(newNeighbor != null)
-			{
-				neighbors.Add(newNeighbor);
-			}
-		}
-
-		return neighbors;
+		return new List<TileController>()
+        {
+            tile.FindNeighbor(Vector2.left),
+            tile.FindNeighbor(Vector2.up),
+            tile.FindNeighbor(Vector2.right),
+            tile.FindNeighbor(Vector2.down)
+        }.Where(n => n is not null).ToList();
 	}
 
 	private TileController smallestF(List<TileController> open)

@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using static Utils;
 
-public class Unit : MonoBehaviour
+public class Unit : Hoverable
 {
 	[Header ("General Data")]
 	[SerializeField]
@@ -11,23 +13,24 @@ public class Unit : MonoBehaviour
 	public SquareController targetSquare;
 	public TileController currentTarget;
 	public UnitPageController page;
-	internal List<Unit> enemiesInRange = new List<Unit>();
+	public List<Unit> enemiesInRange = new List<Unit>();
+	public List<SquareController> interactiblesInRange = new();
 	
 	public float moveSpeed = 10f;
 	public int team;
 	public Color savedColor;
 	public Animator animator;
-	internal PathfindingManager pm;
-	internal TeamManager tm;
-	internal BoardController bc;
+	public PathfindingManager pm;
+	public TeamManager teams;
+	public BoardController bc;
 	private MovementHandler mh;
 
 	[Header ("Logic Data")]
-	public bool isMyTurn = true;
-	public bool isSelected = false;
-	public bool hasMoved = false;
-	public bool hasAttacked = false;
-	public bool mouseIsOver = false;
+	public bool HasInteracted { get; protected set; } = false;
+	public bool HasAttacked { get; protected set; } = false;
+	public bool IsSelected { get; protected set; } = false;
+	public bool HasMoved { get; protected set; } = false;
+	public bool IsMyTurn { get; protected set; } = true;
 	
 	[Header ("Stats")]
 	public int range = 2;
@@ -54,7 +57,7 @@ public class Unit : MonoBehaviour
 	{	
 		page = GameObject.Find("Unit Page").GetComponent<UnitPageController>();
 		bc = GameObject.Find("Board").GetComponent<BoardController>();
-		tm = GameObject.Find("Team Manager").GetComponent<TeamManager>();
+		teams = GameObject.Find("Team Manager").GetComponent<TeamManager>();
 		pm = GameObject.Find("Pathfinding Manager").GetComponent<PathfindingManager>();
 		currentHealth = maxHealth;
 		animator = gameObject.GetComponent<Animator>();
@@ -64,83 +67,85 @@ public class Unit : MonoBehaviour
 
 	protected void Update()
 	{ 
-		GetComponent<SpriteRenderer>().color = mouseIsOver && !isSelected ? Color.cyan
-										     : !isMyTurn && tm.currentTeamIndex == team ? new Color(savedColor.r/2, savedColor.g/2, savedColor.b/2, savedColor.a) 
+		GetComponent<SpriteRenderer>().color = mouseIsOver && !IsSelected ? Color.cyan
+										     : !IsMyTurn && teams.CurrentTeam.Contains(this) ? new Color(savedColor.r/2, savedColor.g/2, savedColor.b/2, savedColor.a) 
 											 : savedColor;
 
 		if(Input.GetMouseButtonUp(0))
 		{
 			GetComponent<CircleCollider2D>().enabled = false;
 			GetComponent<CircleCollider2D>().enabled = true;
-			if(mouseIsOver && !isMyTurn) OnClicked();
+			if(mouseIsOver && !IsMyTurn) OnClicked();
 		}
 		
-		if(Input.GetMouseButtonUp(1))
+		if(Input.GetMouseButtonUp(1) && mouseIsOver)
 		{
-			if(mouseIsOver)
-			{
-				page.currentUnit = this;
-			}
+			page.currentUnit = this;
 		}
 	}
 
-	protected virtual void EndTurn()
+	public void BeginTurn()
 	{
-		print("nend");
-		isMyTurn = false;
+		IsMyTurn = true;
+		HasMoved = false;
+		HasInteracted = false;
+		HasAttacked = false;
+	}
+
+	public void Select()
+	{
+		// print(name+" selected");
+		IsSelected = true;
+	}
+
+	/// <summary>
+	/// sets logic data and informs team manager that a unit's turn is over
+	/// </summary>
+	public virtual void EndTurn()
+	{
 		targetSquare = null;
-		isSelected = false;
+		IsMyTurn = false;
+		IsSelected = false;
+		teams.UpdateCurrentTeam();
 	}
-
-	void OnMouseEnter()
+	public virtual void FinishActions()
 	{
-		mouseIsOver = true;
-	}
-
-	void OnMouseExit()
-	{
-		mouseIsOver = false;
+		print(name+"1");
+		HasInteracted = true;
+		HasAttacked = true;
 	}
 
 	public void OnClicked()
 	{
-		if(tm.selectedUnitIndex >= 0)
+		if(teams.SelectedUnit is Unit sel && sel.IsMyTurn && sel.HasMoved && sel.enemiesInRange.Contains(this) && !sel.HasAttacked)
 		{
-			Unit p = tm.teams[tm.currentTeamIndex].members[tm.selectedUnitIndex];
-			if(p.hasMoved && p.isSelected && p.isMyTurn && p.enemiesInRange.Contains(this))
+			if(sel.animator != null)
 			{
-				if(p.animator != null)
-				{
-					p.animator.SetTrigger("Attack");
+				sel.animator.SetTrigger("Attack");
 
-					p.gameObject.GetComponent<SpriteRenderer>().flipX = (transform.position.x < p.gameObject.transform.position.x);
-				}
-				p.hasAttacked = true;
-				
-				//TODO: MAKE p.CalculateHit IN THE UI, AS WELL AS AVOID
-				p.Attack(this);
-				if(SquareController.ManhattanDistance(transform, p.transform) <= range)
-					Attack(p);
-				(Unit a, Unit d, int m) = GetAdvantageResultsAgainst(p);
-				a.AttackMutipleTimes(d, m >= 5 ? m/5 : 0);
+				sel.gameObject.GetComponent<SpriteRenderer>().flipX = 
+					transform.position.x < sel.gameObject.transform.position.x;
 			}
+			sel.HasAttacked = true;
+			
+			//TODO: MAKE s.CalculateHit() IN THE UI, AS WELL AS AVOID
+			sel.Attack(this);
+			if(ManhattanDistance(transform, sel.transform) <= range)
+				Attack(sel);
+			var (adv, dis, dif) = AdvantageResults(sel);
+			adv.AttackMutipleTimes(dis, dif >= 5 ? dif/5 : 0);
 		}
 	}
 
-	private (Unit adv, Unit disAdv, int advMag) GetAdvantageResultsAgainst(Unit other)
+	private (Unit adv, Unit disAdv, int advMag) AdvantageResults(Unit other)
     {
 		int dif = speed - other.speed;
-		Unit a = this;
-		Unit d = other;
+		Unit a = this, d = other;
 		if(dif < 0) (a, d) = (d, a);
 
         return (a, d, Mathf.Abs(dif));
     }
 
-	private bool WithinPercent(int chance)
-    {
-        return Random.Range(0,101) <= chance;
-    }
 	public int CalculateDamage()
     {
 		return strength * (WithinPercent(luck / 2) ? 2 : 1);
@@ -154,22 +159,17 @@ public class Unit : MonoBehaviour
 
 	public bool ReceiveDamage(int dmg)
     {
-		currentHealth -= dmg - defense;
-        if(currentHealth <= 0)
-		{
+        if((currentHealth -= dmg - defense) <= 0)
 			Die();
-		}
 		return currentHealth <= 0;
     }
 
 	private void Die()
     {
-		if(tm.teams[team].members[tm.selectedUnitIndex] == this)
-			EndTurn();
-        tm.RemoveUnit(this, team);
-		FindCurrentSquare().isObstruction = false;
-		Destroy(this.gameObject);
-		print("died");	
+		if(IsSelected) EndTurn();
+        teams.RemoveUnit(this, team);
+		GetCurrentSquare().isObstruction = false;
+		Destroy(gameObject);
     }
 
 	private void Attack(Unit target)
@@ -183,22 +183,19 @@ public class Unit : MonoBehaviour
         for(int i = 0; i < num; i++) Attack(target);
     }
 
-	public TileController FindCurrentSquare()
+	public TileController GetCurrentSquare()
 	{
-		RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.zero, 1f, LayerMask.GetMask("Board"));
-		if(hit.transform.gameObject.tag == "Board")
-			return hit.transform.gameObject.GetComponent<TileController>();
-		else
-			return null;
+		return Physics2D.Raycast(transform.position, Vector2.zero, 1f, LayerMask.GetMask("Board"))
+			.transform.gameObject.GetComponent<TileController>();
 	}
 
-	public void CheckForEnemiesInRange()
+	private void CheckForEnemiesInRange()
 	{
 		enemiesInRange.Clear();
-		List<RaycastHit2D> hits = new List<RaycastHit2D>();
+		List<RaycastHit2D> hits = new();
 		if(Physics2D.CircleCast(transform.position, range, Vector2.up, ContactFilter2D.noFilter, hits, 0f) > 0)
 		{
-			List<Unit> allInRange = new List<Unit>();
+			List<Unit> allInRange = new();
 			foreach(RaycastHit2D hit in hits)
 			{
 				if (hit.transform.gameObject.tag == "Unit")
@@ -209,10 +206,24 @@ public class Unit : MonoBehaviour
 
 			foreach(Unit unit in allInRange)
 			{
-				if(SquareController.ManhattanDistance(transform, unit.transform) <= range && unit.team != team)
+				if(ManhattanDistance(transform, unit.transform) <= range && unit.team != team)
 				{
 					enemiesInRange.Add(unit);
 				}
+			}
+		}
+	}
+
+	private void SetInteractiblesInRange() 
+	{ 
+		interactiblesInRange.Clear();
+		List<RaycastHit2D> hits = new();
+		if(Physics2D.CircleCast(transform.position, range, Vector2.up, ContactFilter2D.noFilter, hits, 0f) > 0)
+		{
+			foreach(RaycastHit2D hit in hits.Where(h => h.transform.gameObject.tag == "Board"))
+			{
+				var s = hit.transform.gameObject.GetComponent<SquareController>();
+				if(s.isGlowy) interactiblesInRange.Add(s);
 			}
 		}
 	}
@@ -221,5 +232,18 @@ public class Unit : MonoBehaviour
 	{
 		if(!mh.isCurrentlyMoving)
 			mh.Move();
+	}
+
+	public void OnMovementEnded()
+	{
+		CheckForEnemiesInRange();
+		SetInteractiblesInRange();
+		if (this is PlayerUnitController p)
+		{
+			p.ResetSquaresInRange();
+			if(!HasAttacked) p.NotifySquaresInArea(range);
+			else if(!HasInteracted) p.NotifySquaresInArea(1);
+		}
+		HasMoved = true;
 	}
 }

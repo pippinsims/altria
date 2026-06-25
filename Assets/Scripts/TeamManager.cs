@@ -1,120 +1,82 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class TeamManager : MonoBehaviour
 {
-    public List<Team> teams = new List<Team>();
-    public int currentTeamIndex = -1;
-    public int selectedUnitIndex = -1; //-1 if there is no selected unit
-    public BoardController bc;
-    public SpriteRenderer sr;
+    private int currentTeamIndex = -1;
+    private int selectedUnitIndex = -1;
+    private BoardController board;
+    private SpriteRenderer sprite;
+    
+    public List<Team> teams = new();
+    public List<Unit> CurrentTeam => currentTeamIndex > -1 ? teams[currentTeamIndex].members : null;
+    public Unit SelectedUnit => selectedUnitIndex > -1 && CurrentTeam != null ? CurrentTeam[selectedUnitIndex] : null;
 
     void Start()
     {
-        bc = GameObject.Find("Board").GetComponent<BoardController>();
+        board = GameObject.Find("Board").GetComponent<BoardController>();
         GameObject[] gs = GameObject.FindGameObjectsWithTag("Unit");
         foreach(GameObject g in gs)
         {
             Unit u = g.GetComponent<Unit>();
-            while(teams.Count < u.team+1)
+            while(teams.Count < u.team+1) //add teams until u.team exists
             {
-                teams.Add(new Team(false));
+                teams.Add(new());
             }
             teams[u.team].members.Add(u);
         }
         //will be set at start of level
         teams[1].isAi = true;
-        //teams[0].isAi = true;
 
-        sr = GetComponent<SpriteRenderer>();
+        sprite = GetComponent<SpriteRenderer>();
         currentTeamIndex = 0;
-        BeginTeamTurn(teams[currentTeamIndex]);
-        bc.UpdateAllUnitSquares();
+        UpdateCurrentTeam();
+        board.UpdateAllUnitSquares();
     }
 
-    private void BeginTeamTurn(Team teamToBegin)
+    public void SelectNextAiUnit()
     {
-        foreach(Unit unit in teamToBegin.members)
+        if(teams[currentTeamIndex].isAi && selectedUnitIndex < CurrentTeam.Count - 1)
         {
-            unit.isMyTurn = true;
-        }
-
-        if(currentTeamIndex >= 0)
-        {
-            sr.color = GetTeamColor(currentTeamIndex);
-        }
-
-        if(teamToBegin.isAi)
-        {
-            RunAiTurn();
+            // print("selectnextai selectunit-ing");
+            SelectUnit(CurrentTeam[selectedUnitIndex + 1]);
         }
     }
 
-    void RunAiTurn()
+    public bool UpdateCurrentTeam()
     {
-        Team currentTeam = teams[currentTeamIndex];
-        Unit currentUnit = currentTeam.members[0];
-        UpdateSelectedUnit(currentUnit);
-    }
-
-    public void MaybeSelectNextAiUnit()
-    {
-        if(selectedUnitIndex != teams[currentTeamIndex].members.Count - 1)
-        {
-            UpdateSelectedUnit(teams[currentTeamIndex].members[selectedUnitIndex + 1]);
-        }
-    }
-
-    private void EndTeamTurn(Team teamToEnd)
-    {
-        foreach(Unit unit in teamToEnd.members)
-        {
-            unit.hasAttacked = false;
-            unit.hasMoved = false;
-        }
-    }
-
-    public void MaybeUpdateCurrentTeam()
-    {
-        if(CheckTeamIsDone())
+        if(!CurrentTeam.Any(u=>u.IsMyTurn))
         {   
-            EndTeamTurn(teams[currentTeamIndex]);
-            if(currentTeamIndex < teams.Count - 1)
-            {
-                currentTeamIndex++;
-            }else
-            {
-                currentTeamIndex = 0;
-            }
+            if(++currentTeamIndex >= teams.Count) currentTeamIndex = 0;
             selectedUnitIndex = -1;
             
-            BeginTeamTurn(teams[currentTeamIndex]); 
+            foreach(Unit u in CurrentTeam)
+                u.BeginTurn();
+
+            if(currentTeamIndex >= 0)
+                sprite.color = GetTeamColor(currentTeamIndex);
+
+            if(teams[currentTeamIndex].isAi)
+            {
+                // print("ai selectunit-ing");
+                SelectUnit(CurrentTeam[0]);
+            }
+            return true;
         }
+        return false;
     }
 
-    public void UpdateSelectedUnit(Unit newUnit)
+    public void SelectUnit(Unit newUnit)
     {
         if(newUnit.team == currentTeamIndex)
         {
-            selectedUnitIndex = teams[currentTeamIndex].members.IndexOf(newUnit);
-            bc.currentUnit = teams[currentTeamIndex].members[selectedUnitIndex];
-            newUnit.isSelected = true;
+            selectedUnitIndex = CurrentTeam.IndexOf(newUnit);
+            // print(newUnit.name+" selectunit-ed");
+            newUnit.Select();
         }
     }
-
-    private bool CheckTeamIsDone()
-    {
-        foreach(Unit unit in teams[currentTeamIndex].members)
-        {
-            if(unit.isMyTurn)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
 
     public void RemoveUnit(Unit u, int teamIndex)
     {
@@ -134,9 +96,9 @@ public class TeamManager : MonoBehaviour
     {
         foreach(Team t in teams)
         {
-            foreach(Unit unit in t.members)
+            foreach(Unit u in t.members)
             {
-                unit.team = teams.IndexOf(t);
+                u.team = teams.IndexOf(t);
             }
         }
     }

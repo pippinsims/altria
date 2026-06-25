@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Utils;
 
 public class AiUnitController : Unit
 {
@@ -8,19 +9,19 @@ public class AiUnitController : Unit
 	new void Update()
 	{
 		base.Update();
-		if (isSelected)
+		if (IsSelected)
 		{
 			if(targetSquare == null)
 			{
 				FindTargetSquare();
 			}
 
-			if(!hasMoved && targetSquare != null)
+			if(!HasMoved && targetSquare != null)
 			{
 				Move();
 			}
 
-			if(hasMoved)
+			if(HasMoved)
 			{
 				//if units are in range, choose unit in range to attack,
 				if(enemiesInRange.Count > 0)
@@ -36,30 +37,29 @@ public class AiUnitController : Unit
 				}
 				else
 				{
-					hasAttacked = true;
+					HasAttacked = true;
 				}
 			}
 		}
 
-		if(hasAttacked && hasMoved && isMyTurn)
+		if(HasAttacked && HasMoved && IsMyTurn)
 		{
 			EndTurn();
 		}
 	}
 
 	/// <summary>
-    /// resets target unit, informs team manager that a unit's turn is over
+    /// resets target unit
     /// </summary>
-	protected override void EndTurn()
+	public override void EndTurn()
 	{
 		if(moveSpeed == 1f)
 		{
 			print("Turn ended");
 		}
+		targetUnit = null;
 		base.EndTurn();
-		GetComponent<AiUnitController>().SetTargetUnit(null);
-		tm.MaybeSelectNextAiUnit();
-		tm.MaybeUpdateCurrentTeam();
+		teams.SelectNextAiUnit();
 	}
 
 	/// <summary>
@@ -111,28 +111,28 @@ public class AiUnitController : Unit
 				if (hit.transform.gameObject.tag == "Board")
 				{
 					tempSquare = hit.transform.gameObject.GetComponent<SquareController>();
-					float newDist = SquareController.ManhattanDistance(targetUnit.transform, tempSquare.transform);
+					float newDist = ManhattanDistance(targetUnit.transform, tempSquare.transform);
 					//check manhattan distance from target to new square
 					if (newDist <= range)
 					{   
 						//check pathfinding distance
-						if (pm.PathfindingDistance(FindCurrentSquare(), tempSquare.transform) <= move)
+						if (pm.PathfindingDistance(GetCurrentSquare(), tempSquare.transform) <= move)
 						{
 							//if new is further than my position
-							if (furthest == null && newDist > SquareController.ManhattanDistance(targetUnit.transform, FindCurrentSquare().transform))
+							if (furthest == null && newDist > ManhattanDistance(targetUnit.transform, GetCurrentSquare().transform))
 							{
 								furthest = tempSquare;
 							}
 							if (furthest != null)
 							{
 								//if new is further than the previous furthest
-								if (newDist > SquareController.ManhattanDistance(targetUnit.transform, furthest.transform))
+								if (newDist > ManhattanDistance(targetUnit.transform, furthest.transform))
 								{
 									furthest = tempSquare;
 								}
 								//or if new is the same but it's closer walking distance
-								if (newDist == SquareController.ManhattanDistance(targetUnit.transform, furthest.transform)
-								&& pm.PathfindingDistance(FindCurrentSquare(), tempSquare.transform) < pm.PathfindingDistance(FindCurrentSquare(), furthest.transform))
+								if (newDist == ManhattanDistance(targetUnit.transform, furthest.transform)
+								&& pm.PathfindingDistance(GetCurrentSquare(), tempSquare.transform) < pm.PathfindingDistance(GetCurrentSquare(), furthest.transform))
 								{
 									furthest = tempSquare;
 								}
@@ -162,7 +162,7 @@ public class AiUnitController : Unit
 
 		if(targetUnit != null)
 		{
-			TileController targetTile = FindTargetTile(pm.CreatePathStack(FindCurrentSquare(), targetUnit.transform, -1));
+			TileController targetTile = FindTargetTile(pm.CreatePathStack(GetCurrentSquare(), targetUnit.transform, -1));
 
 			if(targetTile != null)
 			{
@@ -171,12 +171,12 @@ public class AiUnitController : Unit
 			else
 			{
 				print("ERROR!! couldn't find target tile!");
-				targetSquare = FindCurrentSquare().GetComponent<SquareController>();
+				targetSquare = GetCurrentSquare().GetComponent<SquareController>();
 			}
 		}
 		else
 		{
-			targetSquare = FindCurrentSquare().GetComponent<SquareController>();
+			targetSquare = GetCurrentSquare().GetComponent<SquareController>();
 		}
 	}
 
@@ -201,32 +201,32 @@ public class AiUnitController : Unit
 
 		if (distToTargetUnit >= range + move - 1)
 		{
-			print("target further than or at range + move");
+			// print("target further than or at range + move");
 			return PointOnPathFromStart(path, move);
 		}
 		else if(distToTargetUnit > range)
 		{
-			print("target further than range");
+			// print("target further than range");
 			return PointOnPathFromStart(path, distToTargetUnit + 1 - range); //+ 1 because PointOnPath includes the original position
 		}
 		else
 		{
 			if (distToTargetUnit == range)
 			{
-				print("target at range");
-				return FindCurrentSquare();
+				// print("target at range");
+				return GetCurrentSquare();
 			}
 			else
 			{
-				print("target closer than range");
+				// print("target closer than range");
 
 				TileController escapeTile = FindEscapeTile();
 				if (escapeTile != null)
 					return escapeTile;
 				else
 				{
-					print("no escape path!");
-					return FindCurrentSquare();
+					// print("no escape path!");
+					return GetCurrentSquare();
 				}
 			}
 		}
@@ -259,9 +259,9 @@ public class AiUnitController : Unit
 		int relDist;
 		if (moveSpeed == 1f)
 			print("move: " + move + ", range: " + range);
-		foreach (Team t in tm.teams)
+		foreach (Team t in teams.teams)
 		{
-			if (tm.teams.IndexOf(t) != team)
+			if (teams.teams.IndexOf(t) != team)
 			{
 				//chsn = unit with lowest health after attack or in range if possible
 				foreach (Unit unit in t.members)
@@ -331,12 +331,12 @@ public class AiUnitController : Unit
     /// <returns></returns>
 	int RelevantDistance(Unit unitToAttack)
 	{
-		Stack<TileController> movePath = pm.CreatePathStack(FindCurrentSquare(), unitToAttack.transform, move);
+		Stack<TileController> movePath = pm.CreatePathStack(GetCurrentSquare(), unitToAttack.transform, move);
 		if (movePath == null) return -1;
 		else
 		{
 			TileController moveEndPoint = GetEndOfStack(movePath);
-			return movePath.Count - 1 + (int)SquareController.ManhattanDistance(moveEndPoint.transform, unitToAttack.transform);
+			return movePath.Count - 1 + (int)ManhattanDistance(moveEndPoint.transform, unitToAttack.transform);
 		}
 	}
 
@@ -347,10 +347,5 @@ public class AiUnitController : Unit
 		while (copy.Count > 0)
 			t = copy.Pop();
 		return t;
-	}
-
-	public void SetTargetUnit(Unit unit)
-	{
-		targetUnit = unit;
 	}
 }

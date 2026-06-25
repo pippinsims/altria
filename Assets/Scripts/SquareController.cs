@@ -1,61 +1,40 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Utils;
 
-public class SquareController : MonoBehaviour
+public class SquareController : Hoverable
 {
-    private bool mouseIsOver = false;
-    public TeamManager tm;
+    public TeamManager teams;
     private Color savedColor;
     public bool isInRange = false;
     public bool isGlowy;
-    private BoardController bc;
+    private BoardController board;
+
+    void Awake() { isGlowy = Random.value < 0.1f; }
 
     void Start()
     {
-        isGlowy = Random.value < 0.1f;
-        tm = GameObject.Find("Team Manager").GetComponent<TeamManager>();
-        bc = gameObject.transform.parent.gameObject.GetComponent<BoardController>();
+        teams = GameObject.Find("Team Manager").GetComponent<TeamManager>();
+        board = gameObject.transform.parent.gameObject.GetComponent<BoardController>();
         savedColor = GetComponent<SpriteRenderer>().color;
     }
 
     void Update()
     {
-        if(Input.GetMouseButtonDown(0) && bc.currentUnit != null && mouseIsOver && !(bc.currentUnit is AiUnitController) && isInRange)
+        if(Input.GetMouseButtonDown(0) && teams.SelectedUnit != null && mouseIsOver && teams.SelectedUnit is not AiUnitController && isInRange)
         {
-            bc.currentUnit.targetSquare = this;
+            teams.SelectedUnit.targetSquare = this;
+        }
+        if(Input.GetMouseButtonDown(1) && mouseIsOver && isGlowy && teams.SelectedUnit != null && teams.SelectedUnit.HasMoved)
+        {
+            if(ManhattanDistance(teams.SelectedUnit.transform, transform) <= 1)
+                print("yeet");
         }
 
-        if(isGlowy)
-        {
-            GetComponent<SpriteRenderer>().color = Color.green;
-        }
-        else if(mouseIsOver)
-        {
-            GetComponent<SpriteRenderer>().color = Color.magenta;
-        }
-        else if(isInRange)
-        {
-            GetComponent<SpriteRenderer>().color = Color.gray;
-        }
-        else
-        {
-            GetComponent<SpriteRenderer>().color = savedColor;
-        }
-    }
-
-    void OnMouseEnter()
-    {
-        mouseIsOver = true;
-    }
-
-    void OnMouseExit()
-    {
-        mouseIsOver = false;
-    }
-
-    public static float ManhattanDistance(Transform t1, Transform t2)
-    {
-         return Mathf.Abs(t1.position.x - t2.position.x) + Mathf.Abs(t1.position.y - t2.position.y);
+        GetComponent<SpriteRenderer>().color = isGlowy ? Color.green
+                                             : mouseIsOver ? Color.magenta
+                                             : isInRange ? Color.gray
+                                             : savedColor;
     }
 }
