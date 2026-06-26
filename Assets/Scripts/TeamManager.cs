@@ -17,18 +17,23 @@ public class TeamManager : MonoBehaviour
     void Start()
     {
         board = GameObject.Find("Board").GetComponent<BoardController>();
+        sprite = GetComponent<SpriteRenderer>();
+    }
+
+    public void SetTeams()
+    {
         GameObject[] gs = GameObject.FindGameObjectsWithTag("Unit");
         foreach(GameObject g in gs)
         {
             Unit u = g.GetComponent<Unit>();
             while(teams.Count < u.team+1) //add teams until u.team exists
             {
-                teams.Add(new());
+                teams.Add(new Team(true));
             }
             teams[u.team].members.Add(u);
         }
         //will be set at start of level
-        teams[1].isAi = true;
+        teams[0].isAi = false;
 
         sprite = GetComponent<SpriteRenderer>();
         currentTeamIndex = 0;
@@ -73,18 +78,46 @@ public class TeamManager : MonoBehaviour
         if(newUnit.team == currentTeamIndex)
         {
             selectedUnitIndex = CurrentTeam.IndexOf(newUnit);
-            // print(newUnit.name+" selectunit-ed");
             newUnit.Select();
         }
     }
 
+    private bool CheckTeamIsDone()
+    {
+        foreach(Unit unit in teams[currentTeamIndex].members)
+        {
+            if(unit.IsMyTurn)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
     public void RemoveUnit(Unit u, int teamIndex)
     {
         teams[teamIndex].members.Remove(u);
+        if(currentTeamIndex == teamIndex)
+        {
+            if(teams[teamIndex].isAi)
+            {
+                foreach (var mem in teams[teamIndex].members)
+                {
+                    if(mem.IsMyTurn)
+                    {
+                        selectedUnitIndex = teams[teamIndex].members.IndexOf(mem);
+                        break;
+                    }
+                }
+            }else
+                selectedUnitIndex = -1;
+        }
+        
         if(teams[teamIndex].members.Count <= 0)
         {
             teams.Remove(teams[teamIndex]);
-            ResetTeamIndexes(teamIndex);
+            ResetTeamIndexes();
             if(currentTeamIndex > teamIndex)
             {
                 currentTeamIndex--;
@@ -92,7 +125,7 @@ public class TeamManager : MonoBehaviour
         }
     }
 
-    void ResetTeamIndexes(int deletedTeamIndex)
+    void ResetTeamIndexes()
     {
         foreach(Team t in teams)
         {

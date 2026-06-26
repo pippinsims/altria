@@ -8,8 +8,7 @@ using static Utils;
 public class Unit : Hoverable
 {
 	[Header ("General Data")]
-	[SerializeField]
-    private Vector2 spawnLocation;
+    public Vector2 spawnLocation;
 	public SquareController targetSquare;
 	public TileController currentTarget;
 	public UnitPageController page;
@@ -123,14 +122,13 @@ public class Unit : Hoverable
 			{
 				sel.animator.SetTrigger("Attack");
 
-				sel.gameObject.GetComponent<SpriteRenderer>().flipX = 
-					transform.position.x < sel.gameObject.transform.position.x;
+				sel.gameObject.GetComponent<SpriteRenderer>().flipX = transform.position.x < sel.gameObject.transform.position.x;
 			}
 			sel.HasAttacked = true;
 			
-			//TODO: MAKE s.CalculateHit() IN THE UI, AS WELL AS AVOID
+			//TODO: MAKE p.CalculateHit IN THE UI, AS WELL AS AVOID
 			sel.Attack(this);
-			if(ManhattanDistance(transform, sel.transform) <= range)
+			if(ManhattanDistance(transform, sel.transform) <= range && currentHealth > 0)
 				Attack(sel);
 			var (adv, dis, dif) = AdvantageResults(sel);
 			adv.AttackMutipleTimes(dis, dif >= 5 ? dif/5 : 0);
@@ -180,7 +178,7 @@ public class Unit : Hoverable
 
 	public void AttackMutipleTimes(Unit target, int num)
     {
-        for(int i = 0; i < num; i++) Attack(target);
+        for(int i = 0; i < num; i++) if(target.currentHealth > 0) Attack(target); else break;
     }
 
 	public TileController GetCurrentSquare()
